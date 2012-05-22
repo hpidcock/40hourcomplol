@@ -32,6 +32,6 @@ public class Camera : MonoBehaviour
 		transform.position = (transform.position * approach + (minPos + maxPos) / 2.0f) / (approach + 1.0f);
 		transform.position = new Vector3(transform.position.x, transform.position.y, -1.0f);
 
-		camera.orthographicSize = Mathf.Clamp((camera.orthographicSize * approach + (minPos - maxPos).magnitude) / (approach + 1.0f), 16.0f, 1e30f);
+		camera.orthographicSize = Mathf.Clamp((camera.orthographicSize * approach + (maxPos.x - minPos.x) / 2.0f) / (approach + 1.0f), 16.0f, 1e30f);
 	}
 }
