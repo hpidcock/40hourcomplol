@@ -3,15 +3,15 @@ using System.Collections;
 
 public class GameLogic : MonoBehaviour
 {
-	Player[] m_Players = null;
+	public Player[] m_Players = null;
 
 	void Start()
 	{
-		m_Players = (Player[])FindObjectsOfType(typeof(Player));
+		m_Players = (Player[])FindSceneObjectsOfType(typeof(Player));
 
-		if (m_Players.Length != 0)
+		if (m_Players.Length != 2)
 		{
-			throw new UnityException("Player count is not 2.");
+			Debug.DebugBreak();
 		}
 	}
 	

@@ -34,14 +34,7 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
-		GameLogic[] logic = (GameLogic[])FindSceneObjectsOfType(typeof(GameLogic));
-		
-		if(logic.Length == 0)
-		{
-			throw new UnityException("Scene does not have a GameLogic object.");
-		}
-
-		m_Game = logic[0];
+		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
 
 		switch (m_Player)
 		{

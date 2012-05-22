@@ -3,9 +3,9 @@ using System.Collections;
 
 class Checkpoint : SpawnPoint
 {
-	void OnCollisionEnter(Collision collision)
+	void OnTriggerEnter(Collider other)
 	{
-		Player player = collision.gameObject.GetComponent<Player>();
+		Player player = other.gameObject.GetComponent<Player>();
 
 		if (player != null)
 		{
