@@ -1,17 +1,22 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameLogic : MonoBehaviour {
-	
-	public GameObject	m_playerREF;		// reference so players can be spawned
+public class GameLogic : MonoBehaviour
+{
+	Player[] m_Players = null;
 
-	// Use this for initialization
-	void Start () {
-	
+	void Start()
+	{
+		m_Players = (Player[])FindObjectsOfType(typeof(Player));
+
+		if (m_Players.Length != 0)
+		{
+			throw new UnityException("Player count is not 2.");
+		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update()
+	{
 	
 	}
 }
