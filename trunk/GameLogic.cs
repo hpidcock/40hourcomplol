@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class CheckpointLogic : MonoBehaviour {
+public class GameLogic : MonoBehaviour {
 	
-	public GameObject m_checkPoint;	// Public checkpoint; can be set to the first in a scene for initial spawn.
+	public GameObject	m_playerREF;		// reference so players can be spawned
+
 	// Use this for initialization
 	void Start () {
 	
