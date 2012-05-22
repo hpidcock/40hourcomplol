@@ -11,7 +11,7 @@ public class GameLogic : MonoBehaviour
 
 		if (m_Players.Length != 2)
 		{
-			Debug.DebugBreak();
+			throw new UnityException("Player count is not 2.");
 		}
 	}
 	
