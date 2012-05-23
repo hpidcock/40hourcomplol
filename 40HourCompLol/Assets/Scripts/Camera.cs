@@ -5,9 +5,17 @@ public class Camera : MonoBehaviour
 {
 	GameLogic m_Game;
 
+	public float m_Fade = 1.0f;
+
 	void Start()
 	{
 		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
+	}
+
+	void OnGUI()
+	{
+		GUI.color = new Color(1.0f, 1.0f, 1.0f, m_Fade);
+		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), guiTexture.texture);
 	}
 	
 	void Update()
