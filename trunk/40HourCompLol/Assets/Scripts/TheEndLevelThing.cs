@@ -4,56 +4,71 @@ using System.Collections.Generic;
 
 public class TheEndLevelThing : MonoBehaviour
 {
-    GameLogic m_Game;
+	public string m_NextScene = "Menu";
 
-    public string m_NextScene = "Menu";
+	GameLogic m_Game;
+	Camera m_Camera;
 
-    HashSet<Player> m_Players = new HashSet<Player>();
+	bool m_LevelChanging = false;
+	HashSet<Player> m_Players = new HashSet<Player>();
 
-    void Start()
-    {
-        m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
-    }
+	void Start()
+	{
+		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
+		m_Camera = (Camera)FindSceneObjectsOfType(typeof(Camera))[0];
+	}
 
-    void Update()
-    {
-        bool changeLevel = true;
+	void Update()
+	{
+		if (m_LevelChanging)
+		{
+			m_Camera.m_Fade += Time.deltaTime * 0.5f;
 
-        foreach (Player player in m_Game.m_Players)
-        {
-            changeLevel = changeLevel && m_Players.Contains(player);
-        }
+			if (m_Camera.m_Fade >= 1.0f)
+			{
+				EndGame();
+			}
+		}
+		else
+		{
+			bool changeLevel = true;
 
-        if (changeLevel && m_Game.m_Players.Length > 0)
-        {
-            EndGame();
-        }
-    }
+			foreach (Player player in m_Game.m_Players)
+			{
+				changeLevel = changeLevel && m_Players.Contains(player);
+			}
 
-    public void EndGame()
-    {
-        LevelData.lololoLTololol = "Hahah it works you fuck";
-        Application.LoadLevel(m_NextScene);
-    }
+			if (changeLevel && m_Game.m_Players.Length > 0)
+			{
+				m_LevelChanging = true;
+				m_Camera.m_Fade = 0.0f;
+			}
+		}
+	}
 
-    void OnTriggerEnter(Collider collider)
-    {
-        Player player = collider.GetComponent<Player>();
+	public void EndGame()
+	{
+		Application.LoadLevel(m_NextScene);
+	}
 
-        if(player != null)
-        {
-            m_Players.Add(player);
-        }
-    }
+	void OnTriggerEnter(Collider collider)
+	{
+		Player player = collider.GetComponent<Player>();
 
-    void OnTriggerExit(Collider collider)
-    {
-        Player player = collider.GetComponent<Player>();
+		if (player != null)
+		{
+			m_Players.Add(player);
+		}
+	}
 
-        if (player != null)
-        {
-            m_Players.Remove(player);
-        }
-    }
+	void OnTriggerExit(Collider collider)
+	{
+		Player player = collider.GetComponent<Player>();
+
+		if (player != null)
+		{
+			m_Players.Remove(player);
+		}
+	}
 }
 
