@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
 	float m_DeathTime;
 
 	KeySet m_KeySet = KeySet.Invalid;
+	PlayerControlState m_controlState = PlayerControlState.PCS_PLAYER;
 
 	float m_LastJump = 0.0f;
 
@@ -91,30 +92,19 @@ public class Player : MonoBehaviour
 			}
 		}
 		
-
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
+		switch(m_controlState)
 		{
-			rigidbody.AddForce((onGround ? (-PlayerSettings.MoveForceGrounded) : (-PlayerSettings.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
+		case PlayerControlState.PCS_OBJECT:
+			if (m_currentTelePlatform != null)
+			{
+				ObjectMovement();
+			}
+			break;
+		case PlayerControlState.PCS_PLAYER:
+			PlayerMovement(onGround);
+			break;
 		}
-
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
-		{
-			rigidbody.AddForce((onGround ? PlayerSettings.MoveForceGrounded : PlayerSettings.MoveForceAir) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
-		}
-
-		if (onGround &&
-			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)) &&
-			Time.time - m_LastJump > 0.1f)
-		{
-			m_LastJump = Time.time;
-			rigidbody.AddForce(0.0f, PlayerSettings.JumpForce, 0.0f, ForceMode.Impulse);
-		}
-
-		if (!onGround &&
-			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
-		{
-			rigidbody.AddForce(0.0f, -PlayerSettings.JumpForce, 0.0f, ForceMode.Acceleration);
-		}
+		
 		
 		if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Cycle)))
 		{
@@ -125,7 +115,7 @@ public class Player : MonoBehaviour
 		}
 		if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Hold)))
 		{
-			
+			ToggleMovementStyle();
 		}
 		}
 		else
@@ -208,5 +198,67 @@ public class Player : MonoBehaviour
 		collider.enabled = true;
 
 		transform.position = m_SpawnPoint.transform.position;
+	}
+	
+	void ToggleMovementStyle()
+	{
+		if (m_controlState == PlayerControlState.PCS_OBJECT)
+		{
+			m_controlState = PlayerControlState.PCS_PLAYER;
+		}
+		else
+		{
+			m_controlState = PlayerControlState.PCS_OBJECT;
+		}
+	}
+	
+	void PlayerMovement(bool a_onGround)
+	{
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
+		{
+			rigidbody.AddForce((a_onGround ? (-PlayerSettings.MoveForceGrounded) : (-PlayerSettings.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
+		}
+
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
+		{
+			rigidbody.AddForce((a_onGround ? PlayerSettings.MoveForceGrounded : PlayerSettings.MoveForceAir) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
+		}
+
+		if (a_onGround &&
+			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)) &&
+			Time.time - m_LastJump > 0.1f)
+		{
+			m_LastJump = Time.time;
+			rigidbody.AddForce(0.0f, PlayerSettings.JumpForce, 0.0f, ForceMode.Impulse);
+		}
+
+		if (!a_onGround &&
+			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
+		{
+			rigidbody.AddForce(0.0f, -PlayerSettings.JumpForce, 0.0f, ForceMode.Acceleration);
+		}
+	}
+	
+	void ObjectMovement()
+	{
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
+		{
+			m_currentTelePlatform.rigidbody.AddForce(-PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+		}
+
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
+		{
+			m_currentTelePlatform.rigidbody.AddForce(PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+		}
+
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)))
+		{
+			m_currentTelePlatform.rigidbody.AddForce(0.0f, PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+		}
+
+		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
+		{
+			m_currentTelePlatform.rigidbody.AddForce(0.0f, -PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+		}
 	}
 }
