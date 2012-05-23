@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
 
 	public SpawnPoint m_SpawnPoint;
 	public PlayerEnum m_Player;
+	bool m_Alive;
+	float m_DeathTime;
 
 	KeySet m_KeySet = KeySet.Invalid;
 
@@ -65,10 +67,13 @@ public class Player : MonoBehaviour
 
 		transform.position = m_SpawnPoint.transform.position;
 	}
-	
+
 	void Update()
-	// Update is called once per frame
 	{
+		rigidbody.WakeUp();
+
+		if (m_Alive)
+		{
 		Ray feetRay = new Ray(collider.bounds.center, new Vector3(0.0f, -1.0f, 0.0f));
 
 		RaycastHit[] hits = Physics.SphereCastAll(feetRay, collider.bounds.extents.x, collider.bounds.extents.y);
@@ -121,6 +126,14 @@ public class Player : MonoBehaviour
 		if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Hold)))
 		{
 			
+		}
+		}
+		else
+		{
+			if (Time.time - m_DeathTime > 0.5f)
+			{
+				Respawn();
+			}
 		}
 	}
 	
@@ -175,5 +188,25 @@ public class Player : MonoBehaviour
 				m_currentTelePlatform = null;
 				break;
 		}
+	}
+
+	public void Kill()
+	{
+		m_Alive = false;
+		m_DeathTime = Time.time;
+
+		renderer.enabled = false;
+		collider.enabled = false;
+	}
+
+	public void Respawn()
+	{
+		m_Alive = true;
+
+		rigidbody.velocity = Vector3.zero;
+		renderer.enabled = true;
+		collider.enabled = true;
+
+		transform.position = m_SpawnPoint.transform.position;
 	}
 }
