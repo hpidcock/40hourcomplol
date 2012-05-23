@@ -10,8 +10,8 @@ internal static class PlayerSettings
 		{KeyCode.None, KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.Return, KeyCode.Backslash}
 	};
 
-	public const float MoveForceAir = 1.0f;
-	public const float MoveForceGrounded = 8.0f;
+	public const float MoveForceAir = 320.0f;
+	public const float MoveForceGrounded = 640.0f;
 	public const float JumpForce = 8.0f;
 
 	public static KeyCode KeyBinding(KeySet set, KeyBind bind)
@@ -62,6 +62,7 @@ public class Player : MonoBehaviour
 	}
 	
 	void Update()
+	// Update is called once per frame
 	{
 		Ray feetRay = new Ray(collider.bounds.center, new Vector3(0.0f, -1.0f, 0.0f));
 
@@ -79,15 +80,16 @@ public class Player : MonoBehaviour
 				break;
 			}
 		}
+		
 
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
 		{
-			rigidbody.AddForce(onGround ? (-PlayerSettings.MoveForceGrounded) : (-PlayerSettings.MoveForceAir), 0.0f, 0.0f, ForceMode.Acceleration);
+			rigidbody.AddForce((onGround ? (-PlayerSettings.MoveForceGrounded) : (-PlayerSettings.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
 		}
 
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
 		{
-			rigidbody.AddForce(onGround ? PlayerSettings.MoveForceGrounded : PlayerSettings.MoveForceAir, 0.0f, 0.0f, ForceMode.Acceleration);
+			rigidbody.AddForce((onGround ? PlayerSettings.MoveForceGrounded : PlayerSettings.MoveForceAir) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
 		}
 
 		if (onGround &&
@@ -102,6 +104,30 @@ public class Player : MonoBehaviour
 			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
 		{
 			rigidbody.AddForce(0.0f, -PlayerSettings.JumpForce, 0.0f, ForceMode.Acceleration);
+		}
+	}
+	
+	void OnCollisionStay(Collision a_collision)
+	{
+	}
+	
+	void OnCollisionEnter(Collision a_collision)
+	{
+		if (a_collision.collider.tag == "Button")
+		{
+			ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
+			logic.m_activators.Add(GetInstanceID());
+			Debug.Log("Active");
+		}
+	}
+	
+	void OnCollisionExit(Collision a_collision)
+	{
+		if (a_collision.collider.tag == "Button")
+		{
+			ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
+			logic.m_activators.Remove(GetInstanceID());
+			Debug.Log("Inactive");
 		}
 	}
 }
