@@ -11,9 +11,12 @@ internal static class PlayerSettings
 	};
 
 	public const float MoveForceAir = 320.0f;
-	public const float MoveForceGrounded = 640.0f;
-	public const float JumpForce = 8.0f;
-	
+	public const float MoveForceGrounded = 840.0f;
+	public const float JumpForce = 10.0f;
+
+	public const float MaxXVelocity = 3.0f;
+	public const float MaxYVelocity = 4.25f;
+
 	public const float PlatformForce = 10.0f;
 
 	public static KeyCode KeyBinding(KeySet set, KeyBind bind)
@@ -22,8 +25,7 @@ internal static class PlayerSettings
 	}
 }
 
-
-public class Player : MonoBehaviour 
+public class Player : MonoBehaviour
 {
 	GameLogic m_Game;
 
@@ -33,12 +35,12 @@ public class Player : MonoBehaviour
 	float m_DeathTime;
 
 	KeySet m_KeySet = KeySet.Invalid;
-	PlayerControlState m_controlState = PlayerControlState.PCS_PLAYER;
+	public PlayerControlState m_controlState = PlayerControlState.PCS_PLAYER;
 
 	float m_LastJump = 0.0f;
 
-	TeleTrigger	m_currentTeleLogic = null;	// Current teleTrigger the player is in, NULL if it's not in any
-	PlatformLogic	m_currentTelePlatform = null;	// Same as m_currentTeleLogic
+	public TeleTrigger m_currentTeleLogic = null;	// Current teleTrigger the player is in, NULL if it's not in any
+	public PlatformLogic m_currentTelePlatform = null;	// Same as m_currentTeleLogic
 
 	void Start()
 	{
@@ -61,12 +63,14 @@ public class Player : MonoBehaviour
 			throw new UnityException("SpawnPoint must be set to the start point.");
 		}
 
-		rigidbody.constraints = RigidbodyConstraints.FreezePositionZ | 
-			RigidbodyConstraints.FreezeRotationX | 
-			RigidbodyConstraints.FreezeRotationY | 
+		rigidbody.constraints = RigidbodyConstraints.FreezePositionZ |
+			RigidbodyConstraints.FreezeRotationX |
+			RigidbodyConstraints.FreezeRotationY |
 			RigidbodyConstraints.FreezeRotationZ;
 
 		transform.position = m_SpawnPoint.transform.position;
+
+		rigidbody.mass = 1.0f;
 	}
 
 	void Update()
@@ -75,48 +79,48 @@ public class Player : MonoBehaviour
 
 		if (m_Alive)
 		{
-		Ray feetRay = new Ray(collider.bounds.center, new Vector3(0.0f, -1.0f, 0.0f));
+			Ray feetRay = new Ray(collider.bounds.center, new Vector3(0.0f, -1.0f, 0.0f));
 
-		RaycastHit[] hits = Physics.SphereCastAll(feetRay, collider.bounds.extents.x, collider.bounds.extents.y);
+			RaycastHit[] hits = Physics.SphereCastAll(feetRay, collider.bounds.extents.x, collider.bounds.extents.y);
 
-		bool onGround = false;
-		// See if we are standing on somethng other than us.
-		foreach (RaycastHit hit in hits)
-		{
-			if (hit.rigidbody != this.rigidbody &&
-				(collider.bounds.center.y - hit.point.y) < (collider.bounds.extents.y + 0.001f) &&
-				hit.point.y < collider.bounds.center.y + collider.bounds.extents.y) // Check if the hit point is under the feet.
+			bool onGround = false;
+			// See if we are standing on somethng other than us.
+			foreach (RaycastHit hit in hits)
 			{
-				onGround = true;
-				break;
+				if (hit.collider.GetComponent<Player>() == null &&
+					(collider.bounds.center.y - hit.point.y) < (collider.bounds.extents.y + 0.001f) &&
+					hit.point.y < collider.bounds.center.y + collider.bounds.extents.y) // Check if the hit point is under the feet.
+				{
+					onGround = true;
+					break;
+				}
 			}
-		}
-		
-		switch(m_controlState)
-		{
-		case PlayerControlState.PCS_OBJECT:
-			if (m_currentTelePlatform != null)
+
+			switch (m_controlState)
 			{
-				ObjectMovement();
+				case PlayerControlState.PCS_OBJECT:
+					if (m_currentTelePlatform != null)
+					{
+						ObjectMovement();
+					}
+					break;
+				case PlayerControlState.PCS_PLAYER:
+					PlayerMovement(onGround);
+					break;
 			}
-			break;
-		case PlayerControlState.PCS_PLAYER:
-			PlayerMovement(onGround);
-			break;
-		}
-		
-		
-		if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Cycle)))
-		{
-			if (m_currentTeleLogic)
+
+
+			if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Cycle)))
 			{
-		 		m_currentTelePlatform = m_currentTeleLogic.GetNextPlatform();
+				if (m_currentTeleLogic)
+				{
+					m_currentTelePlatform = m_currentTeleLogic.GetNextPlatform();
+				}
 			}
-		}
-		if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Hold)))
-		{
-			ToggleMovementStyle();
-		}
+			if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Hold)))
+			{
+				ToggleMovementStyle();
+			}
 		}
 		else
 		{
@@ -126,50 +130,50 @@ public class Player : MonoBehaviour
 			}
 		}
 	}
-	
+
 	void OnCollisionStay(Collision a_collision)
 	{
 	}
-	
+
 	void OnCollisionEnter(Collision a_collision)
 	{
-		switch(a_collision.collider.tag)
+		switch (a_collision.collider.tag)
 		{
-		case "Button":
-			ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
-			logic.m_activators.Add(GetInstanceID());
-			break;
+			case "Button":
+				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
+				logic.m_activators.Add(GetInstanceID());
+				break;
 		}
 	}
-	
+
 	void OnCollisionExit(Collision a_collision)
 	{
-	switch(a_collision.collider.tag)
+		switch (a_collision.collider.tag)
 		{
-		case "Button":
-			ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
-			logic.m_activators.Remove(GetInstanceID());
-			break;
+			case "Button":
+				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
+				logic.m_activators.Remove(GetInstanceID());
+				break;
 		}
 	}
-	
+
 	void OnTriggerEnter(Collider a_collision)
 	{
-		switch(a_collision.collider.tag)
+		switch (a_collision.collider.tag)
 		{
 			case "TeleTrigger":
 				Debug.Log("Entering trigger volume");
-				
+
 				TeleTrigger logic = a_collision.GetComponent<TeleTrigger>();
 				m_currentTelePlatform = logic.GetNextPlatform();
 				m_currentTeleLogic = logic;
 				break;
 		}
 	}
-	
+
 	void OnTriggerExit(Collider a_collision)
 	{
-		switch(a_collision.collider.tag)
+		switch (a_collision.collider.tag)
 		{
 			case "TeleTrigger":
 				m_currentTeleLogic.ResetLastPlatform();
@@ -185,6 +189,10 @@ public class Player : MonoBehaviour
 		m_Alive = false;
 		m_DeathTime = Time.time;
 
+		m_controlState = PlayerControlState.PCS_PLAYER;
+		m_currentTeleLogic = null;
+		m_currentTelePlatform = null;
+
 		renderer.enabled = false;
 		collider.enabled = false;
 	}
@@ -199,19 +207,23 @@ public class Player : MonoBehaviour
 
 		transform.position = m_SpawnPoint.transform.position;
 	}
-	
+
 	void ToggleMovementStyle()
 	{
 		if (m_controlState == PlayerControlState.PCS_OBJECT)
 		{
 			m_controlState = PlayerControlState.PCS_PLAYER;
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.mass = 1.0f;
 		}
 		else
 		{
 			m_controlState = PlayerControlState.PCS_OBJECT;
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.mass = 1e30f;
 		}
 	}
-	
+
 	void PlayerMovement(bool a_onGround)
 	{
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
@@ -237,8 +249,25 @@ public class Player : MonoBehaviour
 		{
 			rigidbody.AddForce(0.0f, -PlayerSettings.JumpForce, 0.0f, ForceMode.Acceleration);
 		}
+
+		if (Mathf.Abs(rigidbody.velocity.x) > PlayerSettings.MaxXVelocity)
+		{
+			if(rigidbody.velocity.x > 0.0f)
+			{
+				rigidbody.AddForce(new Vector3(PlayerSettings.MaxXVelocity - rigidbody.velocity.x, 0.0f, 0.0f), ForceMode.Acceleration);
+			}
+			else
+			{
+				rigidbody.AddForce(new Vector3((rigidbody.velocity.x + PlayerSettings.MaxXVelocity) * -1.0f, 0.0f, 0.0f), ForceMode.Acceleration);
+			}
+		}
+
+		if (rigidbody.velocity.y > PlayerSettings.MaxYVelocity)
+		{
+			rigidbody.AddForce(new Vector3(0.0f, PlayerSettings.MaxYVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
+		}
 	}
-	
+
 	void ObjectMovement()
 	{
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
