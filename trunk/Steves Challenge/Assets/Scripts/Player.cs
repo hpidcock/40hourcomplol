@@ -18,6 +18,9 @@ internal static class PlayerValues
 	public const float MaxYVelocity = 4.25f;
 
 	public const float PlatformForce = 10.0f;
+	
+	public const float FootstepDelay = 0.3f;
+	public const float FootstepThreshold = 0.05f;	// Force required to cause the sound to play
 
 	public static KeyCode KeyBinding(KeySet set, KeyBind bind)
 	{
@@ -28,6 +31,7 @@ internal static class PlayerValues
 public class Player : MonoBehaviour
 {
 	GameLogic m_Game;
+	SoundManager m_soundManager;
 
 	public SpawnPoint m_SpawnPoint;
 	public PlayerEnum m_Player;
@@ -41,10 +45,15 @@ public class Player : MonoBehaviour
 
 	public TeleTrigger m_currentTeleLogic = null;	// Current teleTrigger the player is in, NULL if it's not in any
 	public PlatformLogic m_currentTelePlatform = null;	// Same as m_currentTeleLogic
+	
+	GameObject m_teleSound = null;	// Keep track of the tele sound so it can be destroyed when channeling stops
+	
+	float m_footstepTime = 0.0f;
 
 	void Start()
 	{
 		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
+		m_soundManager = m_Game.GetComponent<SoundManager>();
 
 		switch (m_Player)
 		{
@@ -108,6 +117,8 @@ public class Player : MonoBehaviour
 					PlayerMovement(onGround);
 					break;
 			}
+			
+			UpdateFootstepSound(onGround);
 
 
 			if (Input.GetKeyDown(PlayerValues.KeyBinding(m_KeySet, KeyBind.Cycle)))
@@ -130,6 +141,19 @@ public class Player : MonoBehaviour
 			}
 		}
 	}
+	
+	void UpdateFootstepSound(bool a_onGround)
+	{
+		if (a_onGround && Mathf.Abs(rigidbody.velocity.x) > PlayerValues.FootstepThreshold)
+		{
+			m_footstepTime += Time.deltaTime;
+			if (m_footstepTime > PlayerValues.FootstepDelay)
+			{
+				m_footstepTime = 0.0f;
+				m_soundManager.PlaySound(SoundType.ST_FOOTSTEPS, false, transform.position);
+			}
+		}
+	}
 
 	void OnCollisionStay(Collision a_collision)
 	{
@@ -142,6 +166,7 @@ public class Player : MonoBehaviour
 			case "Button":
 				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
 				logic.m_activators.Add(GetInstanceID());
+				m_soundManager.PlaySound(SoundType.ST_BUTTONPRESS, false, a_collision.gameObject.transform.position);
 				break;
 		}
 	}
@@ -153,6 +178,7 @@ public class Player : MonoBehaviour
 			case "Button":
 				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
 				logic.m_activators.Remove(GetInstanceID());
+				m_soundManager.PlaySound(SoundType.ST_BUTTONPRESS, false, a_collision.gameObject.transform.position);
 				break;
 		}
 	}
@@ -215,12 +241,21 @@ public class Player : MonoBehaviour
 			m_controlState = PlayerControlState.PCS_PLAYER;
 			rigidbody.velocity = Vector3.zero;
 			rigidbody.mass = 1.0f;
+			if (m_teleSound)
+			{
+				Destroy(m_teleSound);
+				m_teleSound = null;
+			}
 		}
 		else
 		{
-			m_controlState = PlayerControlState.PCS_OBJECT;
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.mass = 1e30f;
+			if (m_currentTelePlatform != null)
+			{
+				m_teleSound = m_soundManager.PlaySound(SoundType.ST_TELELOOP, true, transform.position);
+				m_controlState = PlayerControlState.PCS_OBJECT;
+				rigidbody.velocity = Vector3.zero;
+				rigidbody.mass = 1e30f;
+			}
 		}
 	}
 
