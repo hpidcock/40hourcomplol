@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 public class LoadingCamera : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class LoadingCamera : MonoBehaviour
 	private Rect m_CurrentRune;
 	private float m_Fade;
 	private int m_State;
+	private AsyncOperation m_Loading;
 
 	private Rect[] m_Runes = new Rect[] {new Rect(0.0f, 0.75f, 0.25f, 0.25f),
 		new Rect(0.25f, 0.75f, 0.25f, 0.25f),
@@ -20,12 +22,17 @@ public class LoadingCamera : MonoBehaviour
 
 	void Start()
 	{
-		m_ChangeTime = Time.time + 5.0f;
+		m_ChangeTime = Time.time + 2.0f;
 		m_FlipTime = Time.time + 0.35f;
 		m_CurrentRune = m_Runes[Random.Range(0, m_Runes.Length - 1)];
 
 		m_Fade = 0.0f;
 		m_State = 0;
+
+		if (PlayerSettings.advancedLicense)
+		{
+			m_Loading = Application.LoadLevelAdditiveAsync(LevelData.NextLevel);
+		}
 	}
 
 	void Update()
@@ -39,12 +46,21 @@ public class LoadingCamera : MonoBehaviour
 				m_Fade = 1.0f;
 			}
 		}
-		else if (m_State == 2)
+		else if (m_State == 2 && 
+			(m_Loading == null || m_Loading.isDone))
 		{
-			m_Fade -= Time.deltaTime;
+			m_Fade -= Time.deltaTime * 3.0f;
 			if (m_Fade <= 0.0f)
 			{
-				Application.LoadLevel(LevelData.NextLevel);
+				if (m_Loading == null)
+				{
+					Application.LoadLevel(LevelData.NextLevel);
+				}
+				else
+				{
+					DestroyImmediate(this);
+				}
+				return;
 			}
 		}
 

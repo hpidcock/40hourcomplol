@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-internal static class PlayerSettings
+internal static class PlayerValues
 {
 	private static KeyCode[,] m_Keyboard = new KeyCode[(int)KeySet.Count, (int)KeyBind.Count] { 
 		{KeyCode.None, KeyCode.None, KeyCode.None, KeyCode.None, KeyCode.None, KeyCode.None, KeyCode.None},
@@ -110,14 +110,14 @@ public class Player : MonoBehaviour
 			}
 
 
-			if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Cycle)))
+			if (Input.GetKeyDown(PlayerValues.KeyBinding(m_KeySet, KeyBind.Cycle)))
 			{
 				if (m_currentTeleLogic)
 				{
 					m_currentTelePlatform = m_currentTeleLogic.GetNextPlatform();
 				}
 			}
-			if (Input.GetKeyDown(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Hold)))
+			if (Input.GetKeyDown(PlayerValues.KeyBinding(m_KeySet, KeyBind.Hold)))
 			{
 				ToggleMovementStyle();
 			}
@@ -226,45 +226,45 @@ public class Player : MonoBehaviour
 
 	void PlayerMovement(bool a_onGround)
 	{
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Left)))
 		{
-			rigidbody.AddForce((a_onGround ? (-PlayerSettings.MoveForceGrounded) : (-PlayerSettings.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
+			rigidbody.AddForce((a_onGround ? (-PlayerValues.MoveForceGrounded) : (-PlayerValues.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
 		}
 
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Right)))
 		{
-			rigidbody.AddForce((a_onGround ? PlayerSettings.MoveForceGrounded : PlayerSettings.MoveForceAir) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
+			rigidbody.AddForce((a_onGround ? PlayerValues.MoveForceGrounded : PlayerValues.MoveForceAir) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
 		}
 
 		if (a_onGround &&
-			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)) &&
+			Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Up)) &&
 			Time.time - m_LastJump > 0.1f)
 		{
 			m_LastJump = Time.time;
-			rigidbody.AddForce(0.0f, PlayerSettings.JumpForce, 0.0f, ForceMode.Impulse);
+			rigidbody.AddForce(0.0f, PlayerValues.JumpForce, 0.0f, ForceMode.Impulse);
 		}
 
 		if (!a_onGround &&
-			Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
+			Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Down)))
 		{
-			rigidbody.AddForce(0.0f, -PlayerSettings.JumpForce, 0.0f, ForceMode.Acceleration);
+			rigidbody.AddForce(0.0f, -PlayerValues.JumpForce, 0.0f, ForceMode.Acceleration);
 		}
 
-		if (Mathf.Abs(rigidbody.velocity.x) > PlayerSettings.MaxXVelocity)
+		if (Mathf.Abs(rigidbody.velocity.x) > PlayerValues.MaxXVelocity)
 		{
 			if(rigidbody.velocity.x > 0.0f)
 			{
-				rigidbody.AddForce(new Vector3(PlayerSettings.MaxXVelocity - rigidbody.velocity.x, 0.0f, 0.0f), ForceMode.Acceleration);
+				rigidbody.AddForce(new Vector3(PlayerValues.MaxXVelocity - rigidbody.velocity.x, 0.0f, 0.0f), ForceMode.Acceleration);
 			}
 			else
 			{
-				rigidbody.AddForce(new Vector3((rigidbody.velocity.x + PlayerSettings.MaxXVelocity) * -1.0f, 0.0f, 0.0f), ForceMode.Acceleration);
+				rigidbody.AddForce(new Vector3((rigidbody.velocity.x + PlayerValues.MaxXVelocity) * -1.0f, 0.0f, 0.0f), ForceMode.Acceleration);
 			}
 		}
 
-		if (rigidbody.velocity.y > PlayerSettings.MaxYVelocity)
+		if (rigidbody.velocity.y > PlayerValues.MaxYVelocity)
 		{
-			rigidbody.AddForce(new Vector3(0.0f, PlayerSettings.MaxYVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
+			rigidbody.AddForce(new Vector3(0.0f, PlayerValues.MaxYVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
 		}
 	}
 
@@ -281,35 +281,35 @@ public class Player : MonoBehaviour
 			}
 		}
 
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Left)))
 		{
 			foreach(Rigidbody rb in bodies)
 			{
-				rb.AddForce(-PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+				rb.AddForce(-PlayerValues.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
 			}
 		}
 
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Right)))
 		{
 			foreach(Rigidbody rb in bodies)
 			{
-				rb.AddForce(PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+				rb.AddForce(PlayerValues.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
 			}
 		}
 
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Up)))
 		{
 			foreach(Rigidbody rb in bodies)
 			{
-				rb.AddForce(0.0f, PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+				rb.AddForce(0.0f, PlayerValues.PlatformForce, 0.0f, ForceMode.Acceleration);
 			}
 		}
 
-		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Down)))
 		{
 			foreach (Rigidbody rb in bodies)
 			{
-				rb.AddForce(0.0f, -PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+				rb.AddForce(0.0f, -PlayerValues.PlatformForce, 0.0f, ForceMode.Acceleration);
 			}
 		}
 	}
