@@ -7,13 +7,9 @@ public class Camera : MonoBehaviour
 
 	public float m_Fade = 1.0f;
 
-	private Vector3 m_StartPosition;
-
 	void Start()
 	{
 		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
-
-		m_StartPosition = transform.position;
 
 		camera.far = 1000.0f;
 	}

@@ -270,24 +270,47 @@ public class Player : MonoBehaviour
 
 	void ObjectMovement()
 	{
+		List<Rigidbody> bodies = new List<Rigidbody>();
+
+		bodies.Add(m_currentTelePlatform.rigidbody);
+		foreach (Player p in m_currentTelePlatform.m_RidingPlayers)
+		{
+			if (p != this)
+			{
+				bodies.Add(p.rigidbody);
+			}
+		}
+
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Left)))
 		{
-			m_currentTelePlatform.rigidbody.AddForce(-PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+			foreach(Rigidbody rb in bodies)
+			{
+				rb.AddForce(-PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+			}
 		}
 
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Right)))
 		{
-			m_currentTelePlatform.rigidbody.AddForce(PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+			foreach(Rigidbody rb in bodies)
+			{
+				rb.AddForce(PlayerSettings.PlatformForce, 0.0f, 0.0f, ForceMode.Acceleration);
+			}
 		}
 
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Up)))
 		{
-			m_currentTelePlatform.rigidbody.AddForce(0.0f, PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+			foreach(Rigidbody rb in bodies)
+			{
+				rb.AddForce(0.0f, PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+			}
 		}
 
 		if (Input.GetKey(PlayerSettings.KeyBinding(m_KeySet, KeyBind.Down)))
 		{
-			m_currentTelePlatform.rigidbody.AddForce(0.0f, -PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+			foreach (Rigidbody rb in bodies)
+			{
+				rb.AddForce(0.0f, -PlayerSettings.PlatformForce, 0.0f, ForceMode.Acceleration);
+			}
 		}
 	}
 }
