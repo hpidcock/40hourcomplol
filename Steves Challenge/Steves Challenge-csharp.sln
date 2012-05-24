@@ -1,19 +1,23 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
-
+Project("{44886588-FEA4-3965-8099-0282CCBFF2B5}") = "Steves Challenge", "Assembly-CSharp-vs.csproj", "{6A0CBFA5-E012-C793-A62E-4F6E457AE969}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-
+		{6A0CBFA5-E012-C793-A62E-4F6E457AE969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A0CBFA5-E012-C793-A62E-4F6E457AE969}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A0CBFA5-E012-C793-A62E-4F6E457AE969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A0CBFA5-E012-C793-A62E-4F6E457AE969}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																										GlobalSection(MonoDevelopProperties) = preSolution
+																													GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
