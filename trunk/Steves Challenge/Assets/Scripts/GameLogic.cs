@@ -21,6 +21,8 @@ public class GameLogic : MonoBehaviour
 		m_Camera.m_Fade = 1.5f;
 
 		m_FadeIn = true;
+
+		Physics.gravity = new Vector3(0.0f, -18.0f, 0.0f);
 	}
 	
 	void Update()

@@ -10,6 +10,8 @@ public class Camera : MonoBehaviour
 	void Start()
 	{
 		m_Game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
+
+		camera.far = 1000.0f;
 	}
 
 	void OnGUI()
@@ -17,13 +19,13 @@ public class Camera : MonoBehaviour
 		GUI.color = new Color(1.0f, 1.0f, 1.0f, m_Fade);
 		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), guiTexture.texture);
 	}
-	
+
 	void Update()
 	{
 		Vector3 minPos = new Vector3(1e30f, 1e30f, 1e30f);
 		Vector3 maxPos = new Vector3(-1e30f, -1e30f, -1e30f);
 
-		foreach(Player player in m_Game.m_Players)
+		foreach (Player player in m_Game.m_Players)
 		{
 			Vector3 pos = player.transform.position;
 			minPos.x = Mathf.Min(minPos.x, pos.x);
@@ -38,7 +40,7 @@ public class Camera : MonoBehaviour
 		const float approach = 64.0f;
 
 		transform.position = (transform.position * approach + (minPos + maxPos) / 2.0f) / (approach + 1.0f);
-		transform.position = new Vector3(transform.position.x, transform.position.y, -1.0f);
+		transform.position = new Vector3(transform.position.x, transform.position.y, -100.0f);
 
 		camera.orthographicSize = Mathf.Clamp((camera.orthographicSize * approach + (maxPos.x - minPos.x) / 2.0f) / (approach + 1.0f), 16.0f, 1e30f);
 	}
