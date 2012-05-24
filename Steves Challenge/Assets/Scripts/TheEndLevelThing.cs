@@ -48,7 +48,8 @@ public class TheEndLevelThing : MonoBehaviour
 
 	public void EndGame()
 	{
-		Application.LoadLevel(m_NextScene);
+		LevelData.NextLevel = m_NextScene;
+		Application.LoadLevel("Loading");
 	}
 
 	void OnTriggerEnter(Collider collider)
