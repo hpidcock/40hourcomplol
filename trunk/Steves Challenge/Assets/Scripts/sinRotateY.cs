@@ -1,21 +1,19 @@
 using UnityEngine;
 using System.Collections;
 
-public class sinRotateY : MonoBehaviour {
-float bobValue;
-	
-	// Use this for initialization
-	void Start () {
-	
+public class sinRotateY : MonoBehaviour
+{
+	float m_Value;
+	float m_Random;
+
+	void Start()
+	{
+		m_Random = Random.Range(-3.14159f, 3.14159f);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	bobValue = 100/* speed at which amplitude is traveled, more = larger max amplitude*/ * Mathf.Sin(Time.realtimeSinceStartup*39f/*Time Taken to resolve WAVE, lower means longer time taken*/);
-	
-	
-	
-		transform.Rotate (new Vector3(0, bobValue, 0)*Time.deltaTime);
+
+	void Update()
+	{
+		m_Value = 1.0f * Mathf.Sin(Time.time + m_Random);
+		transform.Rotate(new Vector3(0, m_Value, 0) * Time.deltaTime);
 	}
 }
