@@ -57,6 +57,8 @@
      <Compile Include="Assets\Scripts\Killing.cs" />
      <Compile Include="Assets\Scripts\KillingDisablable.cs" />
      <Compile Include="Assets\Scripts\LevelData.cs" />
+     <Compile Include="Assets\Scripts\LoadingCamera.cs" />
+     <Compile Include="Assets\Scripts\MenuCamera.cs" />
      <Compile Include="Assets\Scripts\PlatformLogic.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\PlayerEnum.cs" />
