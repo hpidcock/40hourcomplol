@@ -4,8 +4,8 @@ using System.Collections;
 // Hacky sounds woo
 // 
 
-public class SoundManager : MonoBehaviour {
-	
+public class SoundManager : MonoBehaviour
+{
 	public AudioClip m_footsteps;
 	public AudioClip m_buttonPress;
 	public AudioClip m_crateHit;
@@ -14,55 +14,56 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip m_teleLoop;
 	public AudioClip m_thud;
 	public AudioClip m_bgMusic;
-	
+
 	public GameObject m_emitterPrefab;
 
 	// Use this for initialization
-	void Start () 
+	void Start()
 	{
 		PlaySound(SoundType.ST_BGMUSIC, true, transform.position);
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
-	
+	void Update()
+	{
+
 	}
-	
+
 	// Plays a sound from a target location
 	public GameObject PlaySound(SoundType a_sound, bool a_loop, Vector3 a_pos)
 	{
 		AudioClip clip = null;
 		float volume = 1.0f;
-		switch(a_sound)
+		switch (a_sound)
 		{
-		case SoundType.ST_FOOTSTEPS:
-			clip = m_footsteps;
-			break;
-		case SoundType.ST_BUTTONPRESS:
-			clip = m_buttonPress;
-			break;
-		case SoundType.ST_CRATEHIT:
-			clip = m_crateHit;
-			break;
-		case SoundType.ST_SPIKEKILL:
-			clip = m_spikeKill;	
-			volume = 0.2f;
-			break;
-		case SoundType.ST_SQUASH:
-			clip = m_squash;
-			break;
-		case SoundType.ST_TELELOOP:
-			clip = m_teleLoop;
-			break;
-		case SoundType.ST_THUD:
-			clip = m_thud;
-			break;
-		case SoundType.ST_BGMUSIC:
-			clip = m_bgMusic;
-			volume = 0.1f;
-			break;
+			case SoundType.ST_FOOTSTEPS:
+				clip = m_footsteps;
+				break;
+			case SoundType.ST_BUTTONPRESS:
+				clip = m_buttonPress;
+				break;
+			case SoundType.ST_CRATEHIT:
+				clip = m_crateHit;
+				break;
+			case SoundType.ST_SPIKEKILL:
+				clip = m_spikeKill;
+				volume = 0.2f;
+				break;
+			case SoundType.ST_SQUASH:
+				clip = m_squash;
+				break;
+			case SoundType.ST_TELELOOP:
+				clip = m_teleLoop;
+				break;
+			case SoundType.ST_THUD:
+				clip = m_thud;
+				break;
+			case SoundType.ST_BGMUSIC:
+				clip = m_bgMusic;
+				volume = 0.1f;
+				break;
 		}
-		
+
 		if (clip != null)
 		{
 			//AudioSource.PlayClipAtPoint(clip, a_pos);
@@ -79,6 +80,7 @@ public class SoundManager : MonoBehaviour {
 			}
 			return tempObj;
 		}
+
 		return null;	// No audio played.
 	}
 }
