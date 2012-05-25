@@ -10,8 +10,8 @@ public class ButtonTriggerMove : ButtonTrigger
 	Vector3 m_targetPosition;
 	//Vector3 m_pos;
 	
-	Vector3 m_targetDirection;
-	Vector3 m_retractDirection;	// No point recalculating these
+	//Vector3 m_targetDirection;
+	//Vector3 m_retractDirection;	// No point recalculating these
 	
 	const float m_positionThreshold = 0.2f;
 	
@@ -20,21 +20,19 @@ public class ButtonTriggerMove : ButtonTrigger
 		m_startPosition = transform.position;
 		m_targetPosition = m_startPosition + m_offsetPosition;
 		
-		m_targetDirection = (m_targetPosition - m_startPosition).normalized;
-		m_retractDirection = (m_startPosition - m_targetPosition).normalized;
+		//m_targetDirection = (m_targetPosition - m_startPosition).normalized;
+		//m_retractDirection = (m_startPosition - m_targetPosition).normalized;
 	}
 	
 	public override void UpdateActive()
 	{
 		Vector3 currPos = transform.position;
 		Vector3 currDir = (m_targetPosition - currPos).normalized;
-		if (currDir == m_targetDirection)
-		//if (!DistanceXYCheck(currPos, m_targetPosition, m_positionThreshold))
-		{
-			currPos += m_activeUpdateSpeed * m_targetDirection * Time.deltaTime;
-			transform.position = currPos;
-		}
-		else
+		
+		currPos += m_activeUpdateSpeed * currDir * Time.deltaTime;
+		transform.position = currPos;
+
+		if (DistanceXYCheck(currPos, m_targetPosition, m_positionThreshold))
 		{
 			transform.position = m_targetPosition;
 		}
@@ -44,13 +42,11 @@ public class ButtonTriggerMove : ButtonTrigger
 	{
 		Vector3 currPos = transform.position;
 		Vector3 currDir = (m_startPosition - currPos).normalized;
-		if (currDir == m_retractDirection)
-		//if (!DistanceXYCheck(currPos, m_startPosition, m_positionThreshold))
-		{
-			currPos += m_inactiveUpdateSpeed * m_retractDirection * Time.deltaTime;
-			transform.position = currPos;
-		}
-		else
+		
+		currPos += m_activeUpdateSpeed * currDir * Time.deltaTime;
+		transform.position = currPos;
+
+		if (DistanceXYCheck(currPos, m_startPosition, m_positionThreshold))
 		{
 			transform.position = m_startPosition;
 		}
