@@ -27,20 +27,32 @@ public class ButtonTriggerMove : ButtonTrigger
 	public override void UpdateActive()
 	{
 		Vector3 currPos = transform.position;
-		if (!DistanceXYCheck(currPos, m_targetPosition, m_positionThreshold))
+		Vector3 currDir = (m_targetPosition - currPos).normalized;
+		if (currDir == m_targetDirection)
+		//if (!DistanceXYCheck(currPos, m_targetPosition, m_positionThreshold))
 		{
 			currPos += m_activeUpdateSpeed * m_targetDirection * Time.deltaTime;
 			transform.position = currPos;
+		}
+		else
+		{
+			transform.position = m_targetPosition;
 		}
 	}
 	
 	public override void UpdateInactive()
 	{
 		Vector3 currPos = transform.position;
-		if (!DistanceXYCheck(currPos, m_startPosition, m_positionThreshold))
+		Vector3 currDir = (m_startPosition - currPos).normalized;
+		if (currDir == m_retractDirection)
+		//if (!DistanceXYCheck(currPos, m_startPosition, m_positionThreshold))
 		{
 			currPos += m_inactiveUpdateSpeed * m_retractDirection * Time.deltaTime;
 			transform.position = currPos;
+		}
+		else
+		{
+			transform.position = m_startPosition;
 		}
 	}
 	
