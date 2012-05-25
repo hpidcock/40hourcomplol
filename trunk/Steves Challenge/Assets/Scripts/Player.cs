@@ -254,7 +254,7 @@ public class Player : MonoBehaviour
 				m_teleSound = m_soundManager.PlaySound(SoundType.ST_TELELOOP, true, transform.position);
 				m_controlState = PlayerControlState.PCS_OBJECT;
 				rigidbody.velocity = Vector3.zero;
-				rigidbody.mass = 1e30f;
+				// rigidbody.mass = 1e30f;
 			}
 		}
 	}
@@ -310,10 +310,7 @@ public class Player : MonoBehaviour
 		bodies.Add(m_currentTelePlatform.rigidbody);
 		foreach (Player p in m_currentTelePlatform.m_RidingPlayers)
 		{
-			if (p != this)
-			{
-				bodies.Add(p.rigidbody);
-			}
+			bodies.Add(p.rigidbody);
 		}
 
 		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Left)))

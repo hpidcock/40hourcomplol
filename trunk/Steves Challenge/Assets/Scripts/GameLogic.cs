@@ -22,7 +22,7 @@ public class GameLogic : MonoBehaviour
 
 		m_FadeIn = true;
 
-		Physics.gravity = new Vector3(0.0f, -18.0f, 0.0f);
+		Physics.gravity = new Vector3(0.0f, -14.0f, 0.0f);
 	}
 	
 	void Update()
