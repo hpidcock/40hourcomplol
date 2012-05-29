@@ -25,7 +25,8 @@ public class TeleTrigger : MonoBehaviour
 			Debug.Log(" more than one platform; index is " + m_lastPlatformIndex.ToString());
 			if (m_platforms[m_lastPlatformIndex] != null)
 			{
-				m_platforms[m_lastPlatformIndex].m_active = false;
+				//m_platforms[m_lastPlatformIndex].m_active = false;
+				m_platforms[m_lastPlatformIndex].Deactivate();
 			}
 			if (m_lastPlatformIndex + 1 >= m_platforms.Count)
 			{
@@ -39,7 +40,8 @@ public class TeleTrigger : MonoBehaviour
 				Debug.Log("Platform count is " + m_platforms.Count.ToString());
 				Debug.Log("platform index is less than size; " + m_lastPlatformIndex.ToString());
 				++m_lastPlatformIndex;
-				m_platforms[m_lastPlatformIndex].m_active = true;
+				//m_platforms[m_lastPlatformIndex].m_active = true;
+				m_platforms[m_lastPlatformIndex].Activate();
 				return m_platforms[m_lastPlatformIndex];
 			}
 		}
