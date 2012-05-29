@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
 		{
 			Ray feetRay = new Ray(collider.bounds.center, new Vector3(0.0f, -1.0f, 0.0f));
 
-			RaycastHit[] hits = Physics.SphereCastAll(feetRay, collider.bounds.extents.x, collider.bounds.extents.y);
+			RaycastHit[] hits = Physics.SphereCastAll(feetRay, collider.bounds.extents.x/2.0f, collider.bounds.extents.y);
 
 			bool onGround = false;
 			// See if we are standing on somethng other than us.
@@ -347,40 +347,5 @@ public class Player : MonoBehaviour
 				rb.AddForce(0.0f, -PlayerValues.PlatformForce, 0.0f, ForceMode.Acceleration);
 			}
 		}
-		
-		// Limit velocities
-//		foreach(Rigidbody rb in bodies)
-//		{
-//			
-//			if (Mathf.Abs(rb.velocity.x) > PlayerValues.MaxCrateVelocity)
-//			{
-//				if(rb.velocity.x > 0.0f)
-//				{
-//					rb.AddForce(new Vector3(PlayerValues.MaxCrateVelocity - rigidbody.velocity.x, 0.0f, 0.0f), ForceMode.Acceleration);
-//					Debug.Log("Limiting right");
-//				}
-//				else
-//				{
-//					rb.AddForce(new Vector3((rb.velocity.x + PlayerValues.MaxCrateVelocity) * -1.0f, 0.0f, 0.0f), ForceMode.Acceleration);
-//					Debug.Log("Limiting left");
-//				}
-//				Debug.Log(rb.velocity.x.ToString());
-//			}
-//			
-//			if (Mathf.Abs(rb.velocity.y) > PlayerValues.MaxCrateVelocity)
-//			{
-//				if(rb.velocity.y > 0.0f)
-//				{
-//					rb.AddForce(new Vector3(0.0f, (rb.velocity.y + PlayerValues.MaxCrateVelocity) * -1.0f, 0.0f), ForceMode.Acceleration);
-//					Debug.Log("Limiting top");
-//				}
-//				else
-//				{
-//					rb.AddForce(new Vector3(0.0f, PlayerValues.MaxCrateVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
-//					Debug.Log("Limiting bot");
-//				}
-//				Debug.Log(rb.velocity.y.ToString());
-//			}
-//		}
 	}
 }
