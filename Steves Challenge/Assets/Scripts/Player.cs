@@ -234,6 +234,7 @@ public class Player : MonoBehaviour
 		collider.enabled = true;
 
 		transform.position = m_SpawnPoint.transform.position;
+		m_SpawnPoint.ResetPositions();
 	}
 
 	void ToggleMovementStyle()

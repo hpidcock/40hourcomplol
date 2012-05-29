@@ -9,7 +9,7 @@ public class PlatformLogic : MonoBehaviour
 	public bool m_active = false;
 	const float m_sineDampening = 0.005f;
 	const float m_speedMultiplier = 4.0f;
-	protected const float m_mass = 0.1f;
+	protected const float m_mass = 10.0f;
 	protected const float m_drag = 1.0f;
 
 	public List<Player> m_RidingPlayers = new List<Player>();
