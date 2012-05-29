@@ -9,8 +9,8 @@ public class PlatformLogic : MonoBehaviour
 	public bool m_active = false;
 	const float m_sineDampening = 0.005f;
 	const float m_speedMultiplier = 4.0f;
-	const float m_mass = 10.0f;
-	const float m_drag = 1.0f;
+	protected const float m_mass = 0.1f;
+	protected const float m_drag = 1.0f;
 
 	public List<Player> m_RidingPlayers = new List<Player>();
 
@@ -56,26 +56,14 @@ public class PlatformLogic : MonoBehaviour
 		pos.y += Mathf.Sin(Time.realtimeSinceStartup * m_speedMultiplier) * m_sineDampening;
 		transform.position = pos;
 	}
-
-	void OnCollisionEnter(Collision a_collision)
+	
+	public virtual void Activate()
 	{
-		switch (a_collision.collider.tag)
-		{
-			case "Button":
-				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
-				logic.m_activators.Add(GetInstanceID());
-				break;
-		}
+		m_active = true;
 	}
-
-	void OnCollisionExit(Collision a_collision)
+	
+	public virtual void Deactivate()
 	{
-		switch (a_collision.collider.tag)
-		{
-			case "Button":
-				ButtonLogic logic = a_collision.gameObject.GetComponentInChildren<ButtonLogic>();
-				logic.m_activators.Remove(GetInstanceID());
-				break;
-		}
+		m_active = false;
 	}
 }

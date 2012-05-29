@@ -16,6 +16,8 @@ internal static class PlayerValues
 
 	public const float MaxXVelocity = 3.0f;
 	public const float MaxYVelocity = 4.25f;
+	
+	public const float MaxCrateVelocity = 5.0f;
 
 	public const float PlatformForce = 10.0f;
 	
@@ -241,6 +243,7 @@ public class Player : MonoBehaviour
 			m_controlState = PlayerControlState.PCS_PLAYER;
 			rigidbody.velocity = Vector3.zero;
 			rigidbody.mass = 1.0f;
+			m_currentTelePlatform.Deactivate();
 			if (m_teleSound)
 			{
 				Destroy(m_teleSound);
@@ -254,7 +257,7 @@ public class Player : MonoBehaviour
 				m_teleSound = m_soundManager.PlaySound(SoundType.ST_TELELOOP, true, transform.position);
 				m_controlState = PlayerControlState.PCS_OBJECT;
 				rigidbody.velocity = Vector3.zero;
-				// rigidbody.mass = 1e30f;
+				m_currentTelePlatform.Activate();
 			}
 		}
 	}
@@ -344,5 +347,40 @@ public class Player : MonoBehaviour
 				rb.AddForce(0.0f, -PlayerValues.PlatformForce, 0.0f, ForceMode.Acceleration);
 			}
 		}
+		
+		// Limit velocities
+//		foreach(Rigidbody rb in bodies)
+//		{
+//			
+//			if (Mathf.Abs(rb.velocity.x) > PlayerValues.MaxCrateVelocity)
+//			{
+//				if(rb.velocity.x > 0.0f)
+//				{
+//					rb.AddForce(new Vector3(PlayerValues.MaxCrateVelocity - rigidbody.velocity.x, 0.0f, 0.0f), ForceMode.Acceleration);
+//					Debug.Log("Limiting right");
+//				}
+//				else
+//				{
+//					rb.AddForce(new Vector3((rb.velocity.x + PlayerValues.MaxCrateVelocity) * -1.0f, 0.0f, 0.0f), ForceMode.Acceleration);
+//					Debug.Log("Limiting left");
+//				}
+//				Debug.Log(rb.velocity.x.ToString());
+//			}
+//			
+//			if (Mathf.Abs(rb.velocity.y) > PlayerValues.MaxCrateVelocity)
+//			{
+//				if(rb.velocity.y > 0.0f)
+//				{
+//					rb.AddForce(new Vector3(0.0f, (rb.velocity.y + PlayerValues.MaxCrateVelocity) * -1.0f, 0.0f), ForceMode.Acceleration);
+//					Debug.Log("Limiting top");
+//				}
+//				else
+//				{
+//					rb.AddForce(new Vector3(0.0f, PlayerValues.MaxCrateVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
+//					Debug.Log("Limiting bot");
+//				}
+//				Debug.Log(rb.velocity.y.ToString());
+//			}
+//		}
 	}
 }

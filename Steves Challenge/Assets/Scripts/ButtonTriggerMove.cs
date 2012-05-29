@@ -13,7 +13,7 @@ public class ButtonTriggerMove : ButtonTrigger
 	//Vector3 m_targetDirection;
 	//Vector3 m_retractDirection;	// No point recalculating these
 	
-	const float m_positionThreshold = 0.2f;
+	const float m_positionThreshold = 0.5f;
 	
 	public override void Start()
 	{
@@ -43,7 +43,7 @@ public class ButtonTriggerMove : ButtonTrigger
 		Vector3 currPos = transform.position;
 		Vector3 currDir = (m_startPosition - currPos).normalized;
 		
-		currPos += m_activeUpdateSpeed * currDir * Time.deltaTime;
+		currPos += m_inactiveUpdateSpeed * currDir * Time.deltaTime;
 		transform.position = currPos;
 
 		if (DistanceXYCheck(currPos, m_startPosition, m_positionThreshold))
