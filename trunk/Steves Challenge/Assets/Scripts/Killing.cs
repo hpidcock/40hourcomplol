@@ -5,10 +5,11 @@ using System.Collections.Generic;
 public class Killing : MonoBehaviour
 {
 	SoundManager m_soundManager;
+	GameLogic m_game;
     void Start()
     {
-		GameLogic game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
-		m_soundManager = game.GetComponent<SoundManager>();
+		m_game = (GameLogic)FindSceneObjectsOfType(typeof(GameLogic))[0];
+		m_soundManager = m_game.GetComponent<SoundManager>();
     }
 
     void Update()
@@ -23,7 +24,10 @@ public class Killing : MonoBehaviour
 
         if (player != null)
         {
-            player.Kill();
+			foreach (Player p in m_game.m_Players)
+			{
+				p.Kill();
+			}
 			m_soundManager.PlaySound(SoundType.ST_SPIKEKILL, false, transform.position);
 			
         }

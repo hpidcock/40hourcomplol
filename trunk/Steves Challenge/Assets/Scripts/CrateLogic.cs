@@ -6,6 +6,8 @@ using System.Collections;
 
 public class CrateLogic : PlatformLogic {
 	
+	
+	//const float m_crateMass = 0.001f;
 	// Use this for initialization
 	void Start () 
 	{
