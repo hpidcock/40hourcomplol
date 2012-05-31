@@ -52,7 +52,6 @@ public class LoadingCamera : MonoBehaviour
 		if (m_FlipTime < Time.time)
 		{
 			m_FlipTime = Time.time + Random.Range(0.35f, 0.8f);
-
 			m_CurrentRune = m_Runes[Random.Range(0, m_Runes.Length - 1)];
 		}
 

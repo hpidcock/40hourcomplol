@@ -73,6 +73,8 @@ public class Player : MonoBehaviour
 		{
 			throw new UnityException("SpawnPoint must be set to the start point.");
 		}
+		
+		SetSpawnPoint();
 
 		rigidbody.constraints = RigidbodyConstraints.FreezePositionZ |
 			RigidbodyConstraints.FreezeRotationX |
@@ -82,6 +84,24 @@ public class Player : MonoBehaviour
 		transform.position = m_SpawnPoint.transform.position;
 
 		rigidbody.mass = 1.0f;
+	}
+	
+	void SetSpawnPoint()
+	{
+		SpawnPoint[] spawnPoints = (SpawnPoint[])FindSceneObjectsOfType(typeof(SpawnPoint));
+		SpawnPointLocation loc = SpawnPointLocation.SPL_BOTTOM;
+		if (m_Player == LevelData.TopPlayer)
+		{
+			loc = SpawnPointLocation.SPL_TOP;
+		}
+		foreach (SpawnPoint s in spawnPoints)
+		{
+			if (s.m_location == loc)
+			{
+				m_SpawnPoint = s;
+			}
+		}
+		Debug.Log(m_Player.ToString() + " is spawning at " + m_SpawnPoint.m_location);
 	}
 
 	void Update()
@@ -214,6 +234,11 @@ public class Player : MonoBehaviour
 
 	public void Kill()
 	{
+		if (m_controlState == PlayerControlState.PCS_OBJECT)
+		{
+			ToggleMovementStyle();
+		}
+		
 		m_Alive = false;
 		m_DeathTime = Time.time;
 
