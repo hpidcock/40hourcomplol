@@ -7,6 +7,7 @@ public class SpawnPoint : MonoBehaviour
 	GameLogic m_Game;
 
 	public SpawnPoint m_Next;
+	public SpawnPointLocation m_location;	// Not needed for checkpoints
 	
 	public List<GameObject> m_resetableObjects;
 	
