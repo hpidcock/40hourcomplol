@@ -20,6 +20,13 @@ public class TheEndLevelThing : MonoBehaviour
 
 	void Update()
 	{
+		if (!m_LevelChanging && Input.GetKeyDown(KeyCode.R))
+		{
+			Debug.Log(m_NextScene);
+			m_NextScene = LevelData.NextLevel;
+			EndGame();
+		}
+		Debug.Log(m_LevelChanging.ToString());
 		if (m_LevelChanging)
 		{
 			m_Camera.m_Fade += Time.deltaTime * 0.5f;
