@@ -24,10 +24,11 @@ public class Killing : MonoBehaviour
 
         if (player != null)
         {
-			foreach (Player p in m_game.m_Players)
-			{
-				p.Kill();
-			}
+//			foreach (Player p in m_game.m_Players)
+//			{
+//				p.Kill();
+//			}
+			player.Kill();
 			m_soundManager.PlaySound(SoundType.ST_SPIKEKILL, false, transform.position);
 			
         }

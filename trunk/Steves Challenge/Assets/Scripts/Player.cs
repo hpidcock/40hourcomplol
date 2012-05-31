@@ -269,7 +269,10 @@ public class Player : MonoBehaviour
 			m_controlState = PlayerControlState.PCS_PLAYER;
 			rigidbody.velocity = Vector3.zero;
 			rigidbody.mass = 1.0f;
-			m_currentTelePlatform.Deactivate();
+			if (m_currentTelePlatform != null)
+			{
+				m_currentTelePlatform.Deactivate();
+			}
 			if (m_teleSound)
 			{
 				Destroy(m_teleSound);
