@@ -23,6 +23,7 @@ internal static class PlayerValues
 	
 	public const float FootstepDelay = 0.3f;
 	public const float FootstepThreshold = 0.05f;	// Force required to cause the sound to play
+	public const float RunAnimSpeedModifier = 0.2f;	// Speed at which the player runs in relation to movement
 
 	public static KeyCode KeyBinding(KeySet set, KeyBind bind)
 	{
@@ -39,6 +40,9 @@ public class Player : MonoBehaviour
 	public PlayerEnum m_Player;
 	bool m_Alive;
 	float m_DeathTime;
+	
+	Animation m_playerAnim;
+	AnimationState m_runAnim;
 
 	KeySet m_KeySet = KeySet.Invalid;
 	public PlayerControlState m_controlState = PlayerControlState.PCS_PLAYER;
@@ -84,6 +88,15 @@ public class Player : MonoBehaviour
 		transform.position = m_SpawnPoint.transform.position;
 
 		rigidbody.mass = 1.0f;
+		
+		m_playerAnim = GetComponentInChildren<Animation>();
+		m_playerAnim.Play("idle");
+		
+		foreach (AnimationState a in m_playerAnim)
+		{
+			if (a.name == "run")
+				m_runAnim = a;
+		}
 	}
 	
 	void SetSpawnPoint()
@@ -101,7 +114,6 @@ public class Player : MonoBehaviour
 				m_SpawnPoint = s;
 			}
 		}
-		Debug.Log(m_Player.ToString() + " is spawning at " + m_SpawnPoint.m_location);
 	}
 
 	void Update()
@@ -168,7 +180,7 @@ public class Player : MonoBehaviour
 	{
 		if (a_onGround && Mathf.Abs(rigidbody.velocity.x) > PlayerValues.FootstepThreshold)
 		{
-			m_footstepTime += Time.deltaTime;
+			m_footstepTime += Time.deltaTime * Mathf.Abs(rigidbody.velocity.x) * PlayerValues.RunAnimSpeedModifier;
 			if (m_footstepTime > PlayerValues.FootstepDelay)
 			{
 				m_footstepTime = 0.0f;
@@ -218,7 +230,24 @@ public class Player : MonoBehaviour
 				break;
 		}
 	}
-
+	
+	void OnTriggerStay(Collider a_collision)
+	{
+		switch (a_collision.collider.tag)
+		{
+			case "Reset":
+				if (Input.GetKeyDown(PlayerValues.KeyBinding(m_KeySet, KeyBind.Hold)))
+				{
+					ResetTower tower = a_collision.collider.gameObject.GetComponent<ResetTower>();
+				if (tower)
+				{
+					tower.ResetPositions();
+				}
+				}
+				break;
+		}
+	}
+	
 	void OnTriggerExit(Collider a_collision)
 	{
 		switch (a_collision.collider.tag)
@@ -259,7 +288,6 @@ public class Player : MonoBehaviour
 		collider.enabled = true;
 
 		transform.position = m_SpawnPoint.transform.position;
-		m_SpawnPoint.ResetPositions();
 	}
 
 	void ToggleMovementStyle()
@@ -293,6 +321,9 @@ public class Player : MonoBehaviour
 
 	void PlayerMovement(bool a_onGround)
 	{
+		UpdateAnimations(a_onGround);
+		m_runAnim.speed = rigidbody.velocity.x * PlayerValues.RunAnimSpeedModifier;
+		
 		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Left)))
 		{
 			rigidbody.AddForce((a_onGround ? (-PlayerValues.MoveForceGrounded) : (-PlayerValues.MoveForceAir)) * Time.deltaTime, 0.0f, 0.0f, ForceMode.Acceleration);
@@ -309,6 +340,8 @@ public class Player : MonoBehaviour
 		{
 			m_LastJump = Time.time;
 			rigidbody.AddForce(0.0f, PlayerValues.JumpForce, 0.0f, ForceMode.Impulse);
+			m_playerAnim.Stop();
+			m_playerAnim.Play("jump");
 		}
 
 		if (!a_onGround &&
@@ -332,13 +365,47 @@ public class Player : MonoBehaviour
 		if (rigidbody.velocity.y > PlayerValues.MaxYVelocity)
 		{
 			rigidbody.AddForce(new Vector3(0.0f, PlayerValues.MaxYVelocity - rigidbody.velocity.y, 0.0f), ForceMode.Acceleration);
+		}	
+	}
+	
+	void UpdateAnimations(bool a_onGround)
+	{
+		// Deal with animations
+		if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Left)))
+		{
+			PlayRunAnim(new Vector3(0, 270, 0), a_onGround);
 		}
+		else if (Input.GetKey(PlayerValues.KeyBinding(m_KeySet, KeyBind.Right)))
+		{
+			PlayRunAnim(new Vector3(0, 90, 0), a_onGround);
+		}
+		
+		//if (a_onGround && Mathf.Abs(rigidbody.velocity.x) < 0.1f && Mathf.Abs(rigidbody.velocity.y) < 0.1f)
+		if (a_onGround && Mathf.Abs(rigidbody.velocity.x) < 0.1f)
+		{
+			m_playerAnim.Play("idle");
+			transform.rotation = Quaternion.Euler(0,0,0);
+		}
+	}
+	
+	void PlayRunAnim(Vector3 a_rotation, bool a_onGround)
+	{
+		if (a_onGround)
+		{
+			if (!m_playerAnim.IsPlaying("run"))
+			{
+				m_playerAnim.Play("run");
+			}
+		}
+		transform.rotation = Quaternion.Euler(a_rotation);
 	}
 
 	void ObjectMovement()
 	{
+		m_playerAnim.Play("idle");
+		
 		List<Rigidbody> bodies = new List<Rigidbody>();
-
+		
 		bodies.Add(m_currentTelePlatform.rigidbody);
 		foreach (Player p in m_currentTelePlatform.m_RidingPlayers)
 		{
